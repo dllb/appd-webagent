@@ -1,0 +1,77 @@
+---
+- name: Install/Update Application Dynamics Java Server Agent
+  hosts: apache_hosts
+  serial: 3
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+  - name: "Create Appd apache agent home directory {{ appd_apacheagent_home }} that will be owned by {{ appd_user }}" 
+    file:
+      path: "{{ appd_apacheagent_home }}"
+      state: directory
+      mode: 0775
+      owner: "{{ appd_user }}"
+      group: "{{ appd_user }}"
+    become: yes
+    become_user: "{{ appd_user }}"      
+
+  - name: "Unarchive AppD Apache agent from {{ appd_apache_source }} to {{ appd_apacheagent_home }}"
+    unarchive:
+      src: "{{ appd_apache_source }}"
+      dest: "{{ appd_apacheagent_home }}"
+      owner: "{{ appd_user }}"
+      group: "{{ appd_user }}"
+    become: yes
+    become_user: "{{ appd_user }}"     
+
+## Create a new appd agent config file for each node
+  - name: "Process template for {{apache_nodes.node}}"
+    template:
+     src: "{{ appd_agent_config_template }}"
+     dest: "{{appd_apache_conf_dir }}/extra/appdynamics_agent_{{item.node}}.conf"
+     owner: "{{ appd_user }}"
+     group: "{{ appd_user }}"
+     mode: 0644
+     force: yes
+     backup: yes
+    loop: "{{ apache_nodes }}"
+
+  - name: "Add AppD Config to {{ appd_apache_conf_file }}"
+    become: yes
+    become_user: "{{ appd_user }}"  
+    lineinfile:
+      path: "{{appd_apache_conf_dir }}/httpd-{{ item.node }}.conf"
+      line: "Include /app/httpd/conf/extra/appdynamics_agent_{{ item.node }}.conf"
+      regex: ^\s*Include\s* /app/httpd/conf/extra/appdynamics_agent_.*.conf
+      state: present
+      insertafter: ^BrowserMatch\s*.*redirect-carefully$
+      backup: yes 
+    loop: "{{ apache_nodes }}"   
+
+  - name: "Run appd {{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh - ignore all errors"  
+    become_user: "{{ appd_user }}"
+    shell: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh"
+    ignore_errors: yes
+
+  - name: "Get proxy server process PID if it is running"
+    become_user: "{{ appd_user }}" 
+    shell: >
+      echo -n
+      $(pgrep runSDKProxy)
+    register: proxy_procs
+      
+  - debug:
+      msg: "This is the proxy status: {{ proxy_procs }}"
+     
+  - name: "Stop local appd proxy {{ appd_proxy_restart_cmd }}"
+    become: yes
+    become_user: "{{ appd_user }}" 
+    shell: "pkill runSDKProxy.sh"
+    when: proxy_procs.stdout != "" 
+  
+  - name: "Start local appd proxy {{ appd_proxy_restart_cmd }}"
+    become: yes
+    become_user: "{{ appd_user }}"
+    shell: "{{ appd_proxy_restart_cmd }}"        
