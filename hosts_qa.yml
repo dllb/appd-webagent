@@ -42,4 +42,5 @@ external:
       - {node: 'www4',  appd_node: 'www4qa',        appd_app_name: 'ShareMyData_QA', appd_tier: WebTier}
 
 test_host:
-  itwwweqa05:        
+  hosts:
+    itwwweqa05:        
