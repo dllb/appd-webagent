@@ -17,3 +17,28 @@ ungrouped:
       ansible_ssh_user: httpd    
       apache_nodes: 
       - {node: 'cda',  appd_node: 'itwwwiqa03e',    appd_app_name: 'ShareMyData_QA', appd_tier: WebTier}
+
+    itwwweqa01: 
+    itwwweqa02: 
+    itwwweqa03: 
+    itwwweqa04: 
+    itwwweqa05: 
+    
+      
+  external:
+    itwwweqa01:
+    itwwweqa02:
+    itwwweqa03:
+    itwwweqa04:
+    itwwweqa05:
+  vars:
+    ansible_ssh_private_key_file: /home/weblogic/.ssh/splunk_id_rsa 
+    ansible_ssh_user: httpd  
+    apache_nodes: 
+      - {node: 'cda',   appd_node: 'sharemydataqa', appd_app_name: 'ShareMyData_QA', appd_tier: WebTier}
+      - {node: 'mye',   appd_node: 'wwwextqa3',     appd_app_name: 'ShareMyData_QA', appd_tier: WebTier}
+      - {node: 'www3',  appd_node: 'www3qa',        appd_app_name: 'ShareMyData_QA', appd_tier: WebTier}
+      - {node: 'www4',  appd_node: 'www4qa',        appd_app_name: 'ShareMyData_QA', appd_tier: WebTier}
+
+  test_host:
+    itwwweqa05:        
