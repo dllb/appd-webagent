@@ -20,3 +20,5 @@ appd_proxy_host: pgeproxyws.comp.pge.com
 appd_proxy_port: 8080
 
 appd_proxy_restart_cmd: "nohup {{ appd_apacheagent_home }}/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> {{ appd_apacheagent_home }}/appdynamics-sdk-native/logs/proxy.out &"
+
+

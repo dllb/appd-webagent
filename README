@@ -1,1 +1,26 @@
 Read this...
+
+
+cd /home/weblogic/projects/appd-webagent
+git pull origin master
+ansible -m ping -i hosts_qa.yml all 
+ansible-playbook -i hosts_qa.yml appd_apache_agent.yml --limit test_host
+
+/usr/sbin/httpd -f /app/httpd/conf/httpd-cda.conf -k stop
+sleep 15
+/usr/sbin/httpd -f /app/httpd/conf/httpd-cda.conf -k start
+
+
+/usr/sbin/httpd -f /app/httpd/conf/httpd-www3.conf -k stop
+sleep 15
+/usr/sbin/httpd -f /app/httpd/conf/httpd-www3.conf -k start
+
+/usr/sbin/httpd -f /app/httpd/conf/httpd-www4.conf -k stop
+sleep 15
+/usr/sbin/httpd -f /app/httpd/conf/httpd-www4.conf -k start
+
+/usr/sbin/httpd -f /app/httpd/conf/httpd-mye.conf -k stop
+sleep 15
+/usr/sbin/httpd -f /app/httpd/conf/httpd-mye.conf -k start
+
+nohup /app/AppDynamics/AppAgent/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> /app/AppDynamics/AppAgent/appdynamics-sdk-native/logs/proxy.out &
