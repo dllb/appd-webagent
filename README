@@ -24,3 +24,84 @@ sleep 15
 /usr/sbin/httpd -f /app/httpd/conf/httpd-mye.conf -k start
 
 nohup /app/AppDynamics/AppAgent/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> /app/AppDynamics/AppAgent/appdynamics-sdk-native/logs/proxy.out &
+
+Read this...
+# https://docs.appdynamics.com/display/PRO45/Install+the+Apache+Agent
+
+chown httpd:httpd /app/httpd/conf
+
+cd /home/weblogic/projects/appd-webagent
+git pull origin master
+ansible -m ping -i hosts_qa.yml all 
+ansible-playbook -i hosts_qa.yml appd_apache_agent.yml --limit test_host
+
+#GENREF
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-genref.conf -k stop
+sleep 15
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-genref.conf -k start
+
+#CDA
+sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-cda.conf -k stop
+sleep 15
+sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-cda.conf -k start
+
+# WWW3
+sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-www3.conf -k stop
+sleep 15
+sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-www3.conf -k start
+
+#WWW4
+sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-www4.conf -k stop
+sleep 15
+sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-www4.conf -k start
+
+/usr/sbin/httpd -f /app/httpd/conf/httpd-mye.conf -k stop
+sleep 15
+/usr/sbin/httpd -f /app/httpd/conf/httpd-mye.conf -k start
+
+pgrep runSDKProxy
+nohup /app/AppDynamics/AppAgent/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> /app/AppDynamics/AppAgent/appdynamics-sdk-native/logs/proxy.out &
+
+AppDynamicsApplicationContext <application> <tier> <node> 
+
+Include /app/httpd/conf/extra/appdynamics_agent.conf
+httpd-cda.conf itwwwdev01e
+httpd.conf
+itwwwdev01:
+  httpd-cda.conf: 
+    itwwwdev01e
+       AppDynamicsApplicationContext ShareMyData_dev  WebTier itwwwdev01e
+    sharemydataintradev2
+       AppDynamicsApplicationContext ShareMyData_dev  WebTier sharemydataintradev2
+  httpd-genref.conf
+    itwwwdev01g
+       AppDynamicsApplicationContext ShareMyData_dev  WebTier itwwwdev01g
+
+itwwwedev01:   
+  httpd-cda.conf: 
+    itwwwedev01g
+      AppDynamicsApplicationContext ShareMyData_dev  WebTier itwwwedev01g
+    sharemydatadev
+      AppDynamicsApplicationContext ShareMyData_dev  WebTier sharemydatadev
+  
+  httpd-www3.conf
+    itwwwedev01f
+      AppDynamicsApplicationContext ShareMyData_dev  WebTier itwwwedev01f
+    
+  httpd-www4.conf
+    sharemydatadev2
+      AppDynamicsApplicationContext ShareMyData_dev  WebTier sharemydatadev2
+      
+
+
+*www3                 itwwwetst01
+*cda                  itwwwetst01
+itwwwdev01e          itwwwdev01
+itwwwdev01g          itwwwdev01
+itwwwedev01b         itwwwedev01
+itwwwedev01f         itwwwedev01
+itwwwedev01g         itwwwedev01
+sharemydatadev       itwwwedev01
+sharemydatadev2      itwwwedev01
+ sharemydataintradev2 itwwwdev01
+
