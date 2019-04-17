@@ -1,4 +1,4 @@
-ungrouped:
+all:
   hosts:
     itwwwiqa01:
     itwwwiqa02:
@@ -32,10 +32,10 @@ external:
     ansible_ssh_private_key_file: /home/weblogic/.ssh/splunk_id_rsa 
     ansible_ssh_user: httpd  
     apache_nodes: 
-    - {config_file: 'httpd-cda.conf', virt_server: 'sharemydataqa.pge.com', app: 'ShareMyData_Qa', node: 'sharemydataqa'}
-    - {config_file: 'httpd-cda.conf', virt_server: 'downloadmydataqa.pge.com', app: 'ShareMyData_Qa', node: 'downloadmydataqa'}   
-    - {config_file: 'httpd-mye.conf', virt_server: 'wwwextqa3.pge.com', app: 'ShareMyData_Qa', node: 'wwwextqa3'}
-    - {config_file: 'httpd-www4.conf', virt_server: 'www4qa.pge.com', app: 'ShareMyData_Qa', node: 'www4qa'}
+    - {config_file: 'httpd-cda.conf', virt_server: 'sharemydataqa.pge.com', app: 'ShareMyData_QA', node: 'sharemydataqa'}
+    - {config_file: 'httpd-cda.conf', virt_server: 'downloadmydataqa.pge.com', app: 'ShareMyData_QA', node: 'downloadmydataqa'}   
+    - {config_file: 'httpd-mye.conf', virt_server: 'wwwextqa3.pge.com', app: 'ShareMyData_QA', node: 'wwwextqa3'}
+    - {config_file: 'httpd-www4.conf', virt_server: 'www4qa.pge.com', app: 'ShareMyData_QA', node: 'www4qa'}
 
 test_host:
   hosts:

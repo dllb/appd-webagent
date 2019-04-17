@@ -1,7 +1,6 @@
 ---
 - name: Install/Update Application Dynamics Java Server Agent
   hosts: all
-  serial: 3
 
   vars_files:
     - vars.yml
@@ -60,29 +59,25 @@
       state: present
     with_items: "{{ apache_nodes }}"
 
+  - name: "Run appd {{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh - ignore all errors"  
+    become_user: "{{ appd_user }}"
+    shell: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh"
+    ignore_errors: yes
 
-#  - name: "Run appd {{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh - ignore all errors"  
-#    become_user: "{{ appd_user }}"
-#    shell: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh"
-#    ignore_errors: yes
+  - name: "Get proxy server process PID if it is running"
+    become_user: "{{ appd_user }}" 
+    shell: pgrep runSDKProxy
+    ignore_errors: yes
+    changed_when: false
+    register: proxy_procs
 
-#  - name: "Get proxy server process PID if it is running"
-#    become_user: "{{ appd_user }}" 
-#    shell: >
-#      echo -n
-#      $(pgrep runSDKProxy)
-#    register: proxy_procs
-      
-#  - debug:
-#      msg: "This is the proxy status: {{ proxy_procs }}"
-     
-#  - name: "Stop local appd proxy {{ appd_proxy_restart_cmd }}"
-#    become: yes
-#    become_user: "{{ appd_user }}" 
-#    shell: "pkill runSDKProxy.sh"
-#    when: proxy_procs.stdout != "" 
+  - name: "Stop local appd proxy {{ appd_proxy_restart_cmd }}"
+    become: yes
+    become_user: "{{ appd_user }}" 
+    shell: "kill {{ proxy_procs.stdout }}"
+    when: proxy_procs.stdout != "" 
   
-#  - name: "Start local appd proxy {{ appd_proxy_restart_cmd }}"
-#    become: yes
-#    become_user: "{{ appd_user }}"
-#    shell: "{{ appd_proxy_restart_cmd }}"        
+  - name: "Start local appd proxy {{ appd_proxy_restart_cmd }}"
+    become: yes
+    become_user: "{{ appd_user }}"
+    shell: "{{ appd_proxy_restart_cmd }}"        
