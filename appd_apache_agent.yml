@@ -27,33 +27,41 @@
     become_user: "{{ appd_user }}"     
 
 ## Create a new appd agent config file for each node
-  - name: "Process template for {{apache_nodes.node}}"
+  - name: "Process template for {{apache_nodes.config_file}}"
     template:
      src: "{{ appd_agent_config_template }}"
-     dest: "{{appd_apache_conf_dir }}/extra/appdynamics_agent_{{item.node}}.conf"
+     dest: "{{ appd_agent_config_file }}"
      owner: "{{ appd_user }}"
      group: "{{ appd_user }}"
      mode: 0644
      force: yes
      backup: yes
-    loop: "{{ apache_nodes }}"
 
-  - name: "Add AppD Config to {{ appd_apache_conf_file }}"
+  - name: "Add the Include directive to {{ appd_apache_conf_file }}"
     become: yes
     become_user: "{{ appd_user }}"  
     lineinfile:
-      path: "{{appd_apache_conf_dir }}/httpd-{{ item.node }}.conf"
-      line: "Include /app/httpd/conf/extra/appdynamics_agent_{{ item.node }}.conf"
-      regex: ^\s*Include\s* /app/httpd/conf/extra/appdynamics_agent_.*.conf
+      path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
+      line: "Include /app/httpd/conf/extra/appdynamics_agent.conf"
+      regex: ^\s*Include\s* /app/httpd/conf/extra/appdynamics_agent.conf
       state: present
       insertafter: ^BrowserMatch\s*.*redirect-carefully$
       backup: yes 
     loop: "{{ apache_nodes }}"   
 
-  - name: "Run appd {{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh - ignore all errors"  
+  - name: "Add AppDynamicsApplicationContext to virtual server configuration for {{ apache_nodes.virt_server }}"
+    become: yes
     become_user: "{{ appd_user }}"
-    shell: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh"
-    ignore_errors: yes
+    lineinfile:
+      path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
+      line: "AppDynamicsApplicationContext {{ item.app }} WebTier {{ item.node }}"
+      insertafter: ^.*(ServerName|ServerAlias) {{ item.node }}.*$
+    loop: "{{ apache_nodes }}"
+
+#  - name: "Run appd {{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh - ignore all errors"  
+#    become_user: "{{ appd_user }}"
+#    shell: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh"
+#    ignore_errors: yes
 
 #  - name: "Get proxy server process PID if it is running"
 #    become_user: "{{ appd_user }}" 
