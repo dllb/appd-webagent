@@ -21,6 +21,7 @@
     unarchive:
       src: "{{ appd_apache_source }}"
       dest: "{{ appd_apacheagent_home }}"
+      creates: "{{ appd_apacheagent_home }}/appdynamics-sdk-native"
       owner: "{{ appd_user }}"
       group: "{{ appd_user }}"
     become: yes
@@ -54,9 +55,11 @@
     become_user: "{{ appd_user }}"
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
-      line: "AppDynamicsApplicationContext {{ item.app }} WebTier {{ item.node }}"
-      insertafter: ^.*(ServerName|ServerAlias) {{ item.node }}.*$
-    loop: "{{ apache_nodes }}"
+      line: " AppDynamicsApplicationContext {{ item.app }} WebTier {{ item.node }}"
+      insertafter: ^.*((S|s)erver(N|n)ame|(S|s)erver(A|a)lias)\s* {{ item.virt_server }}.*$
+      state: present
+    with_items: "{{ apache_nodes }}"
+
 
 #  - name: "Run appd {{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh - ignore all errors"  
 #    become_user: "{{ appd_user }}"
