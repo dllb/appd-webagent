@@ -54,10 +54,13 @@
     become_user: "{{ appd_user }}"
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
-      line: " AppDynamicsApplicationContext {{ item.app }} {{ item.node }} {{inventory_hostname}}"
+      line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{inventory_hostname}}-{{ counter }}"
+      regex: 'AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{inventory_hostname}}.*'
       insertafter: ^.*((S|s)erver(N|n)ame|(S|s)erver(A|a)lias)\s* {{ item.virt_server }}.*$
       state: present
     with_items: "{{ apache_nodes }}"
+    loop_control:
+      index_var: counter
 
   - name: "Run appd {{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh - ignore all errors"  
     become_user: "{{ appd_user }}"

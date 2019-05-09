@@ -2,7 +2,8 @@
 # Vars for AppDynamic Java Agent Install/Upgrade  
 appd_user: "httpd"
 
-appd_apache_source: "ApacheAgent-4.4.0.37433-64bit-linux.gz"
+appd_webagent_version: 4.4.0
+appd_apache_source: "ApacheAgent-4.4.0-64bit-linux.gz"
 appd_apacheagent_home: /app/AppDynamics/AppAgent
 appd_apache_conf_dir: /app/httpd/conf
 appd_apache_conf_file: "{{appd_apache_conf_dir }}/httpd-{{ apache_node }}.conf"

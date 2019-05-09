@@ -18,8 +18,7 @@ internal:
     ansible_ssh_private_key_file: /home/weblogic/.ssh/jenkins_id_rsa 
     ansible_ssh_user: httpd    
     apache_nodes: 
-      - {node: 'cda',  appd_node: 'itwwwiqa01e',    appd_app_name: 'ShareMyData_QA', appd_tier: WebTier}
-
+    - {config_file: 'httpd-cda.conf',  virt_server: 'sharemydataintraqa.pge.com', app: 'ShareMyData_QA', tier: 'sharemydataintraqa'}
       
 external:
   hosts:
@@ -32,10 +31,11 @@ external:
     ansible_ssh_private_key_file: /home/weblogic/.ssh/splunk_id_rsa 
     ansible_ssh_user: httpd  
     apache_nodes: 
-    - {config_file: 'httpd-cda.conf', virt_server: 'sharemydataqa.pge.com', app: 'ShareMyData_QA', node: 'sharemydataqa'}
-    - {config_file: 'httpd-cda.conf', virt_server: 'downloadmydataqa.pge.com', app: 'ShareMyData_QA', node: 'downloadmydataqa'}   
-    - {config_file: 'httpd-mye.conf', virt_server: 'wwwextqa3.pge.com', app: 'ShareMyData_QA', node: 'wwwextqa3'}
-    - {config_file: 'httpd-www4.conf', virt_server: 'www4qa.pge.com', app: 'ShareMyData_QA', node: 'www4qa'}
+    - {config_file: 'httpd-cda.conf',  virt_server: 'downloadmydataqa.pge.com', app: 'ShareMyData_QA', tier: 'downloadmydataqa'}
+    - {config_file: 'httpd-cda.conf',  virt_server: 'sharemydataqa.pge.com',    app: 'ShareMyData_QA', tier: 'sharemydataqa'}      
+    - {config_file: 'httpd-mye.conf',  virt_server: 'wwwextqa3.pge.com',        app: 'ShareMyData_QA', tier: 'wwwextqa3' }
+    - {config_file: 'httpd-www3.conf', virt_server: 'www3qa.pge.com',           app: 'ShareMyData_QA', tier: 'www3qa'}
+    - {config_file: 'httpd-www4.conf', virt_server: 'www4qa.pge.com',           app: 'ShareMyData_QA', tier: 'www4qa'}
 
 test_host:
   hosts:
