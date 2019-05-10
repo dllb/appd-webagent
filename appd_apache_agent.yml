@@ -5,8 +5,77 @@
   vars_files:
     - vars.yml
 
+  vars:
+    appd_agent_upgrade: false    
+    appd_agent_action: ""
+
   tasks:
-  - name: "Create Appd apache agent home directory {{ appd_apacheagent_home }} that will be owned by {{ appd_user }}" 
+  - name: "grab appd install file from {{ appd_webagent_source_url }}"
+    local_action: "command wget -N {{ appd_webagent_source_url }}"
+    changed_when: false
+    run_once: true
+
+  - name: Ansible check if VERSION.tst file exists in target directory.
+    stat:
+      path: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/VERSION.txt"
+    register: version_file_details  
+
+  - debug:
+      var: version_file_details    
+
+  - name: Review file stat results and set action to new-install if the file does not exist
+    set_fact:
+      appd_agent_action: new-install
+    when: version_file_details.stat.exists == false
+
+  - name: "read version file contents from {{ appd_apacheagent_home }}/appdynamics-sdk-native/VERSION.txt"
+    slurp:
+      src: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/VERSION.txt"
+    register: ver_file_content  
+    when: appd_agent_action != 'new-install'
+
+  - name: Extract the version from the string read in
+    set_fact:
+      installed_ver: "{{ ver_file_content['content'] | b64decode | regex_search(regex, '\\1')  }}"
+    vars:
+      regex: '^(\d+\.\d+\.\d+)\..*'  
+    when: appd_agent_action != 'new-install'
+
+  - debug:
+      var: installed_ver
+
+  - debug:
+      var: appd_webagent_version
+
+  - name: "Test to see if target version is equal to the installed version and set the action to manage-config"
+    set_fact: 
+      appd_agent_action: "manage-config"
+      #appd_agent_action: "{{ 'manage-config' if installed_ver is version(appd_webagent_version, operator='eq') else '' }}"
+    # Skip this step is we already know its a new install
+    when: 
+      - appd_agent_action != 'new-install' 
+      - installed_ver.0 is version(appd_webagent_version, operator='eq')
+
+  - debug:
+      var: appd_agent_action  
+
+  - name: Set the action to upgrade if the version ansible has is newer than what is installed
+    set_fact: 
+      appd_agent_action: "{{ 'upgrade' if installed_ver is version(appd_webagent_version, '>') else 'new-install'}}"
+    # skip this step is we already know it a new install or just a config change
+    when: appd_agent_action == ''
+    
+  - debug:
+      msg: "This is a web agent {{ appd_agent_action }} to version {{ appd_webagent_version }}"
+
+  - assert:
+      that: appd_agent_action != '' 
+
+  - name: backup existing agent directory before upgrading
+    command: "mv {{ appd_apacheagent_home }}/appdynamics-sdk-native {{ appd_apacheagent_home }}/appdynamics-sdk-native.{{ installed_ver }}"
+    when: appd_agent_action == 'upgrade'      
+
+  - name: "Ensure Appd apache agent home directory {{ appd_apacheagent_home }} is present and owned by {{ appd_user }}" 
     file:
       path: "{{ appd_apacheagent_home }}"
       state: directory
@@ -25,6 +94,7 @@
       group: "{{ appd_user }}"
     become: yes
     become_user: "{{ appd_user }}"     
+    when: appd_agent_action != 'new-manage-config'
 
 ## Create a new appd agent config file for each node
   - name: "Process template for {{apache_nodes.config_file}}"
@@ -69,7 +139,8 @@
 
   - name: "Get proxy server process PID if it is running"
     become_user: "{{ appd_user }}" 
-    shell: pgrep runSDKProxy
+    #shell: pgrep runSDKProxy
+    shell: "ps -A -o pid,cmd|grep com.appdynamics.ee.agent.proxy.bootstrap.ProxyControlEntryPoint | grep -v grep |head -n 1 | awk '{print $1}'"
     ignore_errors: yes
     changed_when: false
     register: proxy_procs
@@ -84,3 +155,11 @@
     become: yes
     become_user: "{{ appd_user }}"
     shell: "{{ appd_proxy_restart_cmd }}"        
+
+  - name: "Clean up downloaded agent file {{ appd_apache_source }}"
+    local_action:     
+      module: file
+      path: "{{ appd_apache_source }}"
+      state: absent
+    run_once: true      
+    changed_when: false
