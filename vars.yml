@@ -3,13 +3,15 @@
 appd_user: "httpd"
 
 appd_webagent_version: 4.4.0
-appd_apache_source: "ApacheAgent-4.4.0-64bit-linux.gz"
-appd_apacheagent_home: /app/AppDynamics/AppAgent
+appd_apache_agent: "ApacheAgent-4.4.0-64bit-linux.gz"
+appd_apache_agent_home: /app/AppDynamics/AppAgent
 appd_apache_conf_dir: /app/httpd/conf
 appd_apache_conf_file: "{{appd_apache_conf_dir }}/httpd-{{ apache_node }}.conf"
-appd_agent_config_file: "{{appd_apache_conf_dir }}/extra/appdynamics_agent.conf"
+appd_agent_config: appdynamics_agent.conf
+appd_agent_config_file: "{{ appd_apache_conf_dir }}/extra/{{ appd_agent_config }}"
 appd_agent_config_template: appdynamics_agent.conf.j2
 appd_apache_conf_line: "Include {{ appd_agent_config_file }}"
+appd_apache_config_line_old: "Include /app/httpd/conf/extra/gappdynamics_agent.conf"
 appd_webagent_source_url: "http://itbuildwlsdev01:8060/artifactory/ops_bin_local/AppDynamics/ApacheAgent/4.4.0/ApacheAgent-4.4.0-64bit-linux.gz"
 
 # controller-info.xml template settings
@@ -21,6 +23,6 @@ appd_account_access_key: fzjk5rg21ss7
 appd_proxy_host: pgeproxyws.comp.pge.com
 appd_proxy_port: 8080
 
-appd_proxy_restart_cmd: "nohup {{ appd_apacheagent_home }}/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> {{ appd_apacheagent_home }}/appdynamics-sdk-native/logs/proxy.out &"
+appd_proxy_restart_cmd: "nohup {{ appd_apache_agent_home }}/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> {{ appd_apache_agent_home }}/appdynamics-sdk-native/logs/proxy.out &"
 
 

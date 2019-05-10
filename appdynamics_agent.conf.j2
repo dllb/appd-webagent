@@ -1,6 +1,6 @@
 ## This config file was generated and maintained by Ansible
-LoadFile {{ appd_apacheagent_home }}/appdynamics-sdk-native/sdk_lib/lib/libappdynamics_native_sdk.so
-LoadModule appdynamics_module {{ appd_apacheagent_home }}/appdynamics-sdk-native/WebServerAgent/Apache/libmod_appdynamics22.so
+LoadFile {{ appd_apache_agent_home }}/appdynamics-sdk-native/sdk_lib/lib/libappdynamics_native_sdk.so
+LoadModule appdynamics_module {{ appd_apache_agent_home }}/appdynamics-sdk-native/WebServerAgent/Apache/libmod_appdynamics22.so
 AppDynamicsEnabled ON
 AppDynamicsControllerHost {{ appd_controller_host }}
 AppDynamicsControllerPort {{ appd_controller_port }}

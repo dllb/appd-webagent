@@ -17,20 +17,17 @@
 
   - name: Ansible check if VERSION.tst file exists in target directory.
     stat:
-      path: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/VERSION.txt"
+      path: "{{ appd_apache_agent_home }}/appdynamics-sdk-native/VERSION.txt"
     register: version_file_details  
-
-  - debug:
-      var: version_file_details    
 
   - name: Review file stat results and set action to new-install if the file does not exist
     set_fact:
       appd_agent_action: new-install
     when: version_file_details.stat.exists == false
 
-  - name: "read version file contents from {{ appd_apacheagent_home }}/appdynamics-sdk-native/VERSION.txt"
+  - name: "read version file contents from {{ appd_apache_agent_home }}/appdynamics-sdk-native/VERSION.txt"
     slurp:
-      src: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/VERSION.txt"
+      src: "{{ appd_apache_agent_home }}/appdynamics-sdk-native/VERSION.txt"
     register: ver_file_content  
     when: appd_agent_action != 'new-install'
 
@@ -50,7 +47,6 @@
   - name: "Test to see if target version is equal to the installed version and set the action to manage-config"
     set_fact: 
       appd_agent_action: "manage-config"
-      #appd_agent_action: "{{ 'manage-config' if installed_ver is version(appd_webagent_version, operator='eq') else '' }}"
     # Skip this step is we already know its a new install
     when: 
       - appd_agent_action != 'new-install' 
@@ -72,12 +68,12 @@
       that: appd_agent_action != '' 
 
   - name: backup existing agent directory before upgrading
-    command: "mv {{ appd_apacheagent_home }}/appdynamics-sdk-native {{ appd_apacheagent_home }}/appdynamics-sdk-native.{{ installed_ver }}"
+    command: "mv {{ appd_apache_agent_home }}/appdynamics-sdk-native {{ appd_apache_agent_home }}/appdynamics-sdk-native.{{ installed_ver }}"
     when: appd_agent_action == 'upgrade'      
 
-  - name: "Ensure Appd apache agent home directory {{ appd_apacheagent_home }} is present and owned by {{ appd_user }}" 
+  - name: "Ensure Appd apache agent home directory {{ appd_apache_agent_home }} is present and owned by {{ appd_user }}" 
     file:
-      path: "{{ appd_apacheagent_home }}"
+      path: "{{ appd_apache_agent_home }}"
       state: directory
       mode: 0775
       owner: "{{ appd_user }}"
@@ -85,16 +81,16 @@
     become: yes
     become_user: "{{ appd_user }}"      
 
-  - name: "Unarchive AppD Apache agent from {{ appd_apache_source }} to {{ appd_apacheagent_home }}"
+  - name: "Unarchive AppD Apache agent from {{ appd_apache_agent }} to {{ appd_apache_agent_home }}"
     unarchive:
-      src: "{{ appd_apache_source }}"
-      dest: "{{ appd_apacheagent_home }}"
-      creates: "{{ appd_apacheagent_home }}/appdynamics-sdk-native"
+      src: "{{ appd_apache_agent }}"
+      dest: "{{ appd_apache_agent_home }}"
+      #creates: "{{ appd_apache_agent_home }}/appdynamics-sdk-native"
       owner: "{{ appd_user }}"
       group: "{{ appd_user }}"
     become: yes
     become_user: "{{ appd_user }}"     
-    when: appd_agent_action != 'new-manage-config'
+    when: appd_agent_action == 'upgrade' or appd_agent_action == 'new-install'
 
 ## Create a new appd agent config file for each node
   - name: "Process template for {{apache_nodes.config_file}}"
@@ -107,13 +103,25 @@
      force: yes
      backup: yes
 
+  - name: "Remove the existing Include directive to {{ appd_apache_conf_file }}"
+    become: yes
+    become_user: "{{ appd_user }}"  
+    lineinfile:
+      path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
+      line: "{{ appd_apache_config_line_old }}"
+      regex: "^{{ appd_apache_config_line_old }}"
+      state: absent
+      insertafter: ^BrowserMatch\s*.*redirect-carefully$
+      backup: yes 
+    with_items: "{{ apache_nodes }}"   
+
   - name: "Add the Include directive to {{ appd_apache_conf_file }}"
     become: yes
     become_user: "{{ appd_user }}"  
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
-      line: "Include /app/httpd/conf/extra/appdynamics_agent.conf"
-      regex: ^\s*Include\s* /app/httpd/conf/extra/appdynamics_agent.conf
+      line: "Include {{ appd_agent_config_file }}"
+      regex: ^\s*Include\s*.*/{{ appd_agent_config }}
       state: present
       insertafter: ^BrowserMatch\s*.*redirect-carefully$
       backup: yes 
@@ -125,16 +133,22 @@
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
       line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{inventory_hostname}}-{{ counter }}"
-      regex: 'AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{inventory_hostname}}.*'
+      regex: 'AppDynamicsApplicationContext.*{{ item.tier }}.*$'
       insertafter: ^.*((S|s)erver(N|n)ame|(S|s)erver(A|a)lias)\s* {{ item.virt_server }}.*$
       state: present
     with_items: "{{ apache_nodes }}"
     loop_control:
       index_var: counter
 
-  - name: "Run appd {{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh - ignore all errors"  
+  - name: "Check {{ appd_apache_agent_home }}/appdynamics-sdk-native/conf/appdynamics_sdk_log4cxx.xml"
+    stat:
+      path: "{{ appd_apache_agent_home }}/appdynamics-sdk-native/conf/appdynamics_sdk_log4cxx.xml"
+    register: install_file_details  
+
+  - name: "Run appd {{ appd_apache_agent_home }}/appdynamics-sdk-native/install.sh - ignore all errors"  
     become_user: "{{ appd_user }}"
-    shell: "{{ appd_apacheagent_home }}/appdynamics-sdk-native/install.sh"
+    shell: "{{ appd_apache_agent_home }}/appdynamics-sdk-native/install.sh"
+    when: install_file_details.stat.exists == false
     ignore_errors: yes
 
   - name: "Get proxy server process PID if it is running"
@@ -145,21 +159,23 @@
     changed_when: false
     register: proxy_procs
 
-  - name: "Stop local appd proxy {{ appd_proxy_restart_cmd }}"
+  - name: "Stop local appd proxy"
     become: yes
     become_user: "{{ appd_user }}" 
     shell: "kill {{ proxy_procs.stdout }}"
     when: proxy_procs.stdout != "" 
+    changed_when: false    
   
   - name: "Start local appd proxy {{ appd_proxy_restart_cmd }}"
     become: yes
     become_user: "{{ appd_user }}"
-    shell: "{{ appd_proxy_restart_cmd }}"        
+    shell: "{{ appd_proxy_restart_cmd }}" 
+    changed_when: false           
 
-  - name: "Clean up downloaded agent file {{ appd_apache_source }}"
+  - name: "Clean up downloaded agent file {{ appd_apache_agent }}"
     local_action:     
       module: file
-      path: "{{ appd_apache_source }}"
+      path: "{{ appd_apache_agent }}"
       state: absent
     run_once: true      
     changed_when: false
