@@ -1,3 +1,5 @@
+https://dmsimard.com/2016/01/08/selinux-python-virtualenv-chroot-and-ansible-dont-play-nice/
+
 Read this...
  Testing
 
@@ -19,7 +21,7 @@ ansible -m ping -i hosts_qa.yml all
 ansible-playbook -i hosts_qa.yml appd_apache_agent.yml --limit test_host
 
 #CDA
-cat > /tmp/apache.sh <<- EOM 
+cat > /tmp/apache.sh<<-EOM 
 LD_LIBRARY_PATH="/app/httpd/lib:/app/httpd/conf/extra/wl-proxy/lib:$LD_LIBRARY_PATH:/app/httpd/conf/extra/weblogic/lib" 
 export LD_LIBRARY_PATH
 NETE_WA_ROOT=/app/webagent
@@ -34,24 +36,53 @@ JAVA_HOME=/usr/java1.6
 export JAVA_HOME
 CAPKIHOME="/app/webagent/CAPKI"
 export CAPKIHOME
-#/usr/sbin/apachectl -f /app/httpd/conf/httpd-cda.conf -k stop
-#sleep 15
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-cda.conf -k stop
+sleep 15
 /usr/sbin/apachectl -f /app/httpd/conf/httpd-cda.conf -k start
 EOM
 
 # WWW3
-cat > /tmp/apache.sh <<- EOM 
-sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-www3.conf -k stop
+cat > /tmp/apache.sh<<-EOM 
+LD_LIBRARY_PATH="/app/httpd/lib:/app/httpd/conf/extra/wl-proxy/lib:$LD_LIBRARY_PATH:/app/httpd/conf/extra/weblogic/lib" 
+export LD_LIBRARY_PATH
+NETE_WA_ROOT=/app/webagent
+export NETE_WA_ROOT
+NETE_WA_PATH=${NETE_WA_ROOT}/bin
+export NETE_WA_PATH
+LD_LIBRARY_PATH=${NETE_WA_ROOT}/bin:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+PATH=${NETE_WA_PATH}:${PATH}
+export PATH
+JAVA_HOME=/usr/java1.6
+export JAVA_HOME
+CAPKIHOME="/app/webagent/CAPKI"
+export CAPKIHOME
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-www3.conf -k stop
 sleep 15
-sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-www3.conf -k start
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-www3.conf -k start
 EOM
 
 #WWW4
-cat > /tmp/apache.sh <<- EOM 
-sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-www4.conf -k stop
+cat > /tmp/apache.sh<<-EOM 
+LD_LIBRARY_PATH="/app/httpd/lib:/app/httpd/conf/extra/wl-proxy/lib:$LD_LIBRARY_PATH:/app/httpd/conf/extra/weblogic/lib" 
+export LD_LIBRARY_PATH
+NETE_WA_ROOT=/app/webagent
+export NETE_WA_ROOT
+NETE_WA_PATH=${NETE_WA_ROOT}/bin
+export NETE_WA_PATH
+LD_LIBRARY_PATH=${NETE_WA_ROOT}/bin:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+PATH=${NETE_WA_PATH}:${PATH}
+export PATH
+JAVA_HOME=/usr/java1.6
+export JAVA_HOME
+CAPKIHOME="/app/webagent/CAPKI"
+export CAPKIHOME
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-www4.conf -k stop
 sleep 15
-sudo /usr/sbin/apachectl -f /app/httpd/conf/httpd-www4.conf -k start
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-www4.conf -k start
 EOM
+
 
 
 itwwwdev01
