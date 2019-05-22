@@ -11,7 +11,7 @@ appd_agent_config: appdynamics_agent.conf
 appd_agent_config_file: "{{ appd_apache_conf_dir }}/extra/{{ appd_agent_config }}"
 appd_agent_config_template: appdynamics_agent.conf.j2
 appd_apache_conf_line: "Include {{ appd_agent_config_file }}"
-appd_apache_config_line_old: "Include /app/httpd/conf/extra/gappdynamics_agent.conf"
+appd_apache_config_line_old: "Include /app/httpd/conf/extra/appdynamics_agent.conf"
 appd_webagent_source_url: "http://itbuildwlsdev01:8060/artifactory/ops_bin_local/AppDynamics/ApacheAgent/4.4.0/ApacheAgent-4.4.0-64bit-linux.gz"
 
 # controller-info.xml template settings

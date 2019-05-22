@@ -17,6 +17,8 @@ all:
       - {config_file: 'httpd-cda.conf', virt_server: 'itwwwdev01e.comp.pge.com', app: 'ShareMyData_Dev', tier: 'itwwwdev01e'}
       - {config_file: 'httpd-cda.conf', virt_server: 'sharemydataintradev2.pge.com', app: 'ShareMyData_Dev', tier: 'sharemydataintradev2'}
       - {config_file: 'httpd-genref.conf', virt_server: 'itwwwdev01g.comp.pge.com', app: 'PGE.com_Dev', tier: 'itwwwdev01g'}    
+      ansible_python_interpreter: /home/httpd/bin/python/bin/python2.7
+
 
 apache_hosts:
   hosts:
