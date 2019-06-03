@@ -1,8 +1,6 @@
 all:
   hosts:
-    itwwwedev01: # Template system
-      ansible_ssh_private_key_file: /home/weblogic/.ssh/jenkins_id_rsa 
-      ansible_ssh_user: httpd    
+    itwwwedev01: # Template system  
       apache_nodes:  
       - {config_file: 'httpd-cda.conf',  virt_server: 'itwwwedev01g.comp.pge.com', app: 'ShareMyData_Dev', tier: 'itwwwedev01g'}
       - {config_file: 'httpd-cda.conf',  virt_server: 'sharemydatadev.pge.com',    app: 'ShareMyData_Dev', tier: 'sharemydatadev'}
@@ -11,19 +9,39 @@ all:
       
 
     itwwwdev01: # This host is using Python 2.4 and does not work. Needs to be upgraded
-      ansible_ssh_private_key_file: /home/weblogic/.ssh/jenkins_id_rsa 
-      ansible_ssh_user: httpd
       apache_nodes: 
       - {config_file: 'httpd-cda.conf', virt_server: 'itwwwdev01e.comp.pge.com', app: 'ShareMyData_Dev', tier: 'itwwwdev01e'}
       - {config_file: 'httpd-cda.conf', virt_server: 'sharemydataintradev2.pge.com', app: 'ShareMyData_Dev', tier: 'sharemydataintradev2'}
       - {config_file: 'httpd-genref.conf', virt_server: 'itwwwdev01g.comp.pge.com', app: 'PGE.com_Dev', tier: 'itwwwdev01g'}    
       ansible_python_interpreter: /home/httpd/bin/python/bin/python2.7
 
+    itwwwdev02:
+      apache_nodes:
+      - {config_file: 'httpd.conf', virt_server: 'itwwwdev02a.comp.pge.com', app: 'MyAccount_Dev', tier: 'itwwwdev02a'}
+      - {config_file: 'httpd.conf', virt_server: 'itwwwdev02b.comp.pge.com', app: 'MyAccount_Dev', tier: 'itwwwdev02b'}
+      - {config_file: 'httpd.conf', virt_server: 'itwwwdev02c.comp.pge.com', app: 'MyAccount_Dev', tier: 'itwwwdev02c'}
+      - {config_file: 'httpd.conf', virt_server: 'itwwwdev02d.comp.pge.com', app: 'MyAccount_Dev', tier: 'itwwwdev02d'}
+      - {config_file: 'httpd.conf', virt_server: 'itwwwdev02e.comp.pge.com', app: 'MyAccount_Dev', tier: 'itwwwdev02e'}
+      - {config_file: 'httpd.conf', virt_server: 'itwwwdev02f.comp.pge.com', app: 'MyAccount_Dev', tier: 'itwwwdev02f'}
+      - {config_file: 'httpd.conf', virt_server: 'itwwwdev02g.comp.pge.com', app: 'MyAccount_Dev', tier: 'itwwwdev02g'}
+
+    ccwwwedev01:
+      apache_nodes:
+      - {config_file: 'httpd-pge.conf',     virt_server: 'ccwwwedev01a.comp.pge.com', app: 'PGE.com_Dev', tier: 'wwwpgedev'}
+      - {config_file: 'httpd-pge2.conf',    virt_server: 'ccwwwedev01d.comp.pge.com', app: 'PGE.com_Dev', tier: 'wwwpgedev2'}
+      - {config_file: 'httpd-pgecorp.conf', virt_server: 'ccwwwedev01c.comp.pge.com', app: 'PGE.com_Dev', tier: 'wwwpgecorpdev'}
+      - {config_file: 'httpd-secure.conf',  virt_server: 'ccwwwedev01a.comp.pge.com', app: 'PGE.com_Dev', tier: 'wwwpgedev'}
+
+  vars:
+    ansible_ssh_private_key_file: /home/weblogic/.ssh/jenkins_id_rsa 
+    ansible_ssh_user: httpd 
 
 apache_hosts:
   hosts:
     itwwwedev01: 
+    itwwwdev02:
+    ccwwwedev01:
 
 test_host:
   hosts:
-    itwwwedev01:
+    itwwwdev02:
