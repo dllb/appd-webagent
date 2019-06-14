@@ -1,9 +1,53 @@
+all:
+  hosts:
+    itwwweprd01:
+    itwwweprd02:
+    itwwweprd03:
+    itwwweprd04:
+    itwwweprd05:
+    itwwweprd11:
+    itwwweprd12:
+    itwwweprd13:
+    itwwweprd14:
+    itwwweprd15:
+    itwwwiprd01:
+    itwwwiprd02:
+    itwwwiprd03:
+    itwwwiprd11:
+    itwwwiprd12:
+    itwwwiprd13:
+  vars:
+    ansible_ssh_private_key_file: /home/weblogic/.ssh/jenkins_id_rsa 
+    ansible_ssh_user: httpd      
+
+RANCHO_DATACENTER:
+  hosts:
+    itwwweprd01:
+    itwwweprd02:
+    itwwweprd03:
+    itwwweprd04:
+    itwwweprd05:  
+    itwwwiprd01:
+    itwwwiprd02:
+    itwwwiprd03:
+
+FAIRFIELD_DATACENTER:
+  hosts:  
+    itwwweprd11:
+    itwwweprd12:
+    itwwweprd13:
+    itwwweprd14:
+    itwwweprd15:
+    itwwwiprd11:
+    itwwwiprd12:
+    itwwwiprd13:
+    
 ungrouped:
   hosts:
     itwwweprd01:
-    - {node: 'cda',  appd_node: 'itwwwiqa01e',    appd_app_name: 'ShareMyData_QA', appd_tier: WebTier}
+#    - {node: 'cda',  appd_node: 'itwwwiqa01e',    appd_app_name: 'ShareMyData_QA', appd_tier: WebTier}
     itwwweprd02:
-    - {node: 'cda',  appd_node: 'itwwwiqa01e',    appd_app_name: 'ShareMyData_QA', appd_tier: WebTier} 
+#    - {node: 'cda',  appd_node: 'itwwwiqa01e',    appd_app_name: 'ShareMyData_QA', appd_tier: WebTier} 
     itwwweprd03:
     itwwweprd04:
     itwwweprd05:
