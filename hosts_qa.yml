@@ -23,7 +23,7 @@ internal:
   vars:
     ansible_ssh_private_key_file: /home/weblogic/.ssh/jenkins_id_rsa 
     ansible_ssh_user: httpd 
-    ansible_python_interpreter: /home/httpd/bin/python/bin/python2.7
+    ansible_python_interpreter: /home/httpd/bin/python/lib/python2.7
     apache_nodes: 
     - {config_file: 'httpd-cda.conf',  virt_server: 'sharemydataintraqa.pge.com', app: 'ShareMyData_QA', tier: 'sharemydataintraqa'}
       
@@ -40,6 +40,7 @@ external:
     apache_nodes: 
     - {config_file: 'httpd-cda.conf',  virt_server: 'downloadmydataqa.pge.com', app: 'ShareMyData_QA', tier: 'downloadmydataqa'}
     - {config_file: 'httpd-cda.conf',  virt_server: 'sharemydataqa.pge.com',    app: 'ShareMyData_QA', tier: 'sharemydataqa'}      
+    remove_nodes:
     - {config_file: 'httpd-mye.conf',  virt_server: 'wwwextqa3.pge.com',        app: 'ShareMyData_QA', tier: 'wwwextqa3' }
     - {config_file: 'httpd-www3.conf', virt_server: 'www3qa.pge.com',           app: 'ShareMyData_QA', tier: 'www3qa'}
     - {config_file: 'httpd-www4.conf', virt_server: 'www4qa.pge.com',           app: 'ShareMyData_QA', tier: 'www4qa'}

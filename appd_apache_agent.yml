@@ -103,7 +103,7 @@
      force: yes
      backup: yes
 
-  - name: "Remove the existing Include directive to {{ appd_apache_conf_file }}"
+  - name: "Remove the Include directive in {{ appd_apache_conf_file }}"
     become: yes
     become_user: "{{ appd_user }}"  
     lineinfile:
@@ -113,7 +113,19 @@
       state: absent
       insertafter: ^BrowserMatch\s*.*redirect-carefully$
       backup: yes 
-    with_items: "{{ apache_nodes }}"   
+    with_items: "{{ remove_nodes }}"   
+
+  - name: "Remove instances/virtual servers being monitored from {{ apache_nodes.virt_server }}"      
+    become: yes
+    become_user: "{{ appd_user }}"
+    lineinfile:
+      path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
+      regex: 'AppDynamicsApplicationContext.*{{ item.app }} {{ item.tier }} {{inventory_hostname}}.*$'
+      state: absent
+    with_items: "{{ remove_nodes }}"
+    loop_control:
+      index_var: counter    
+
 
   - name: "Add the Include directive to {{ appd_apache_conf_file }}"
     become: yes
@@ -151,26 +163,18 @@
     when: install_file_details.stat.exists == false
     ignore_errors: yes
 
-  - name: "Get proxy server process PID if it is running"
-    become_user: "{{ appd_user }}" 
-    #shell: pgrep runSDKProxy
-    shell: "ps -A -o pid,cmd|grep com.appdynamics.ee.agent.proxy.bootstrap.ProxyControlEntryPoint | grep -v grep |head -n 1 | awk '{print $1}'"
-    ignore_errors: yes
-    changed_when: false
-    register: proxy_procs
-
-  - name: "Stop local appd proxy"
-    become: yes
-    become_user: "{{ appd_user }}" 
-    shell: "kill {{ proxy_procs.stdout }}"
-    when: proxy_procs.stdout != "" 
-    changed_when: false    
-  
-  - name: "Start local appd proxy {{ appd_proxy_restart_cmd }}"
+  - name: "Start/restart the appd web proxy {{ appd_proxy_restart_cmd }}"
+    shell: |
+      unset PROXY_PID
+      PROXY_PID=`ps -ef | grep "[P]roxyControlEntryPoint" | awk '{ print $2 }'`
+      if [ ! -z "$PROXY_PID" ]; then
+        kill $PROXY_PID
+        sleep 5
+      fi
+      nohup {{ appd_apache_agent_home }}/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> {{ appd_apache_agent_home }}/appdynamics-sdk-native/logs/proxy.out &
     become: yes
     become_user: "{{ appd_user }}"
-    shell: "{{ appd_proxy_restart_cmd }}" 
-    changed_when: false           
+    changed_when: false
 
   - name: "Clean up downloaded agent file {{ appd_apache_agent }}"
     local_action:     
