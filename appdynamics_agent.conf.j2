@@ -1,11 +1,27 @@
+#jinja2: trim_blocks:False
+
 ## This config file was generated and maintained by Ansible
 LoadFile {{ appd_apache_agent_home }}/appdynamics-sdk-native/sdk_lib/lib/libappdynamics_native_sdk.so
 LoadModule appdynamics_module {{ appd_apache_agent_home }}/appdynamics-sdk-native/WebServerAgent/Apache/libmod_appdynamics22.so
 AppDynamicsEnabled ON
-AppDynamicsControllerHost {{ appd_controller_host }}
-AppDynamicsControllerPort {{ appd_controller_port }}
 AppDynamicsControllerSSL ON
-AppDynamicsAccountName {{ appd_account_name }}
-AppDynamicsAccessKey {{ appd_account_access_key }}
+{{''}}
+
+{%- if env == 'PROD' -%}
+# PROD SAAS Connection Info
+AppDynamicsControllerHost pgeprod.saas.appdynamics.com
+AppDynamicsAccountName pgeprod
+AppDynamicsAccessKey pmihny430cvp
+{% else %}
+# NonPROD SAAS Connection Info
+AppDynamicsControllerHost pgenonprod.saas.appdynamics.com
+AppDynamicsAccountName  pgenonprod
+AppDynamicsAccessKey fzjk5rg21ss7
+{% endif %}
+AppDynamicsControllerPort {{ appd_controller_port }}
+
+AppDynamicsApplication {{ default_app }}
+AppDynamicsTier {{ default_tier }}
+AppDynamicsNode {{default_tier}}{{inventory_hostname}}
 
 

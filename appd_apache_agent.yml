@@ -92,7 +92,7 @@
     become_user: "{{ appd_user }}"     
     when: appd_agent_action == 'upgrade' or appd_agent_action == 'new-install'
 
-## Create a new appd agent config file for each node
+## Create a new appd agent config file 
   - name: "Process template for {{apache_nodes.config_file}}"
     template:
      src: "{{ appd_agent_config_template }}"
@@ -114,6 +114,7 @@
       insertafter: ^BrowserMatch\s*.*redirect-carefully$
       backup: yes 
     with_items: "{{ remove_nodes }}"   
+    when: remove_nodes is defined
 
   - name: "Remove instances/virtual servers being monitored from {{ apache_nodes.virt_server }}"      
     become: yes
@@ -124,8 +125,8 @@
       state: absent
     with_items: "{{ remove_nodes }}"
     loop_control:
-      index_var: counter    
-
+      index_var: counter 
+    when: remove_nodes is defined      
 
   - name: "Add the Include directive to {{ appd_apache_conf_file }}"
     become: yes
@@ -144,7 +145,7 @@
     become_user: "{{ appd_user }}"
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
-      line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{inventory_hostname}}-{{ counter }}"
+      line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{ item.acronym }}{{inventory_hostname}}"
       regex: 'AppDynamicsApplicationContext.*{{ item.tier }}.*$'
       insertafter: ^.*((S|s)erver(N|n)ame|(S|s)erver(A|a)lias)\s* {{ item.virt_server }}.*$
       state: present
@@ -166,12 +167,12 @@
   - name: "Start/restart the appd web proxy {{ appd_proxy_restart_cmd }}"
     shell: |
       unset PROXY_PID
-      PROXY_PID=`ps -ef | grep "[P]roxyControlEntryPoint" | awk '{ print $2 }'`
-      if [ ! -z "$PROXY_PID" ]; then
-        kill $PROXY_PID
-        sleep 5
-      fi
-      nohup {{ appd_apache_agent_home }}/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> {{ appd_apache_agent_home }}/appdynamics-sdk-native/logs/proxy.out &
+      #PROXY_PID=`ps -ef | grep "[P]roxyControlEntryPoint" | awk '{ print $2 }'`
+      #if [ ! -z "$PROXY_PID" ]; then
+      #  kill $PROXY_PID
+      #  sleep 5
+      #fi
+      #nohup {{ appd_apache_agent_home }}/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> {{ appd_apache_agent_home }}/appdynamics-sdk-native/logs/proxy.out &
     become: yes
     become_user: "{{ appd_user }}"
     changed_when: false
