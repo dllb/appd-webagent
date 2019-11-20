@@ -106,9 +106,10 @@
      group: "{{ appd_user }}"
      mode: 0644
      force: yes
-     backup: yes
+     backup: yes 
     become: yes
-    become_user: "{{ appd_user }}"      
+    become_method: sudo
+    become_user: "{{ appd_user }}"       
 
   - name: "Remove the Include directive in {{ appd_apache_conf_file }}"
     become: yes
