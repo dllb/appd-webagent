@@ -81,11 +81,6 @@
 #    become: yes
 #    become_user: "{{ appd_user }}"  
 
-  - name: "Remove existing apache agent config file {{ appd_apache_agent }}"
-    file:
-      path: "{{ appd_apache_agent }}"
-      state: absent
-
   - name: "Unarchive AppD Apache agent from {{ appd_apache_agent }} to {{ appd_apache_agent_home }}"
     unarchive:
       src: "{{ appd_apache_agent }}"
@@ -96,6 +91,11 @@
     become: yes
     become_user: "{{ appd_user }}"     
     when: appd_agent_action == 'upgrade' or appd_agent_action == 'new-install'
+
+  - name: "Remove existing apache agent config file {{ appd_agent_config_file }}"
+    file:
+      path: "{{ appd_agent_config_file }}"
+      state: absent    
 
 ## Create a new appd agent config file 
   - name: "Process template for {{appd_agent_config_file}}"
