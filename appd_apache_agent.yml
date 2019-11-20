@@ -97,8 +97,8 @@
     template:
      src: "{{ appd_agent_config_template }}"
      dest: "{{ appd_agent_config_file }}"
-     owner: "{{ appd_user }}"
-     group: "{{ appd_user }}"
+#     owner: "{{ appd_user }}"
+#     group: "{{ appd_user }}"
      mode: 0644
      force: yes
      backup: yes
