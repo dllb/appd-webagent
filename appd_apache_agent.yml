@@ -79,7 +79,12 @@
       owner: "{{ appd_user }}"
       group: "{{ appd_user }}"
 #    become: yes
-#    become_user: "{{ appd_user }}"      
+#    become_user: "{{ appd_user }}"  
+
+  - name: "Remove existing apache agent config file {{ appd_apache_agent }}"
+    file:
+      path: "{{ appd_apache_agent }}"
+      state: absent
 
   - name: "Unarchive AppD Apache agent from {{ appd_apache_agent }} to {{ appd_apache_agent_home }}"
     unarchive:
