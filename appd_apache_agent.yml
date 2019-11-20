@@ -93,12 +93,12 @@
     when: appd_agent_action == 'upgrade' or appd_agent_action == 'new-install'
 
 ## Create a new appd agent config file 
-  - name: "Process template for {{apache_nodes.config_file}}"
+  - name: "Process template for {{appd_agent_config_file}}"
     template:
      src: "{{ appd_agent_config_template }}"
      dest: "{{ appd_agent_config_file }}"
-#     owner: "{{ appd_user }}"
-#     group: "{{ appd_user }}"
+     owner: "{{ appd_user }}"
+     group: "{{ appd_user }}"
      mode: 0644
      force: yes
      backup: yes
