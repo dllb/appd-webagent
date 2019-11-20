@@ -30,6 +30,7 @@ cda:
     ccwwweqa05:
   vars:
     default_app: PGE.com_QA
+    default_tier: wwwpgeqa
     apache_nodes:
     - {config_file: 'httpd-pge.conf',     virt_server: 'wwwpgeqa.pge.com',     app: 'PGE.com_QA', tier: 'wwwpgeqa'}
     - {config_file: 'httpd-pge2.conf',    virt_server: 'wwwpgeqa2.pge.com',    app: 'PGE.com_QA', tier: 'wwwpgeqa2'}
