@@ -20,19 +20,19 @@ all:
     appd_account_access_key: fzjk5rg21ss7
     appd_account_name: pgenonprod       
 
-  cda:
-    hosts:
-      ccwwweqa01:
-      ccwwweqa02:
-      ccwwweqa03:
-      ccwwweqa04:
-      ccwwweqa05:
-    vars:
-      apache_nodes:
-      - {config_file: 'httpd-pge.conf',     virt_server: 'wwwpgeqa.pge.com',     app: 'PGE.com_QA', tier: 'wwwpgeqa'}
-      - {config_file: 'httpd-pge2.conf',    virt_server: 'wwwpgeqa2.pge.com',    app: 'PGE.com_QA', tier: 'wwwpgeqa2'}
-      - {config_file: 'httpd-pgecorp.conf', virt_server: 'wwwpgecorpqa.pge.com', app: 'PGE.com_QA', tier: 'wwwpgecorpqa'}
-      - {config_file: 'httpd-secure.conf',  virt_server: 'wwwpgeqa.pge.com',     app: 'PGE.com_QA', tier: 'wwwpgeqa-secure'}
+cda:
+  hosts:
+    ccwwweqa01:
+    ccwwweqa02:
+    ccwwweqa03:
+    ccwwweqa04:
+    ccwwweqa05:
+  vars:
+    apache_nodes:
+    - {config_file: 'httpd-pge.conf',     virt_server: 'wwwpgeqa.pge.com',     app: 'PGE.com_QA', tier: 'wwwpgeqa'}
+    - {config_file: 'httpd-pge2.conf',    virt_server: 'wwwpgeqa2.pge.com',    app: 'PGE.com_QA', tier: 'wwwpgeqa2'}
+    - {config_file: 'httpd-pgecorp.conf', virt_server: 'wwwpgecorpqa.pge.com', app: 'PGE.com_QA', tier: 'wwwpgecorpqa'}
+    - {config_file: 'httpd-secure.conf',  virt_server: 'wwwpgeqa.pge.com',     app: 'PGE.com_QA', tier: 'wwwpgeqa-secure'}
 
 
 internal:    
