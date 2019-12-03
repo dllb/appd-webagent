@@ -1,6 +1,5 @@
 ---
 # Vars for AppDynamic Java Agent Install/Upgrade  
-appd_user: "httpd"
 
 appd_webagent_version: 4.4.0
 appd_apache_agent: "ApacheAgent-4.4.0-64bit-linux.gz"
