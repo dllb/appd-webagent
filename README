@@ -38,14 +38,6 @@ export JAVA_HOME
 CAPKIHOME="/app/webagent/CAPKI"
 export CAPKIHOME'
 
-cat > /tmp/apache.sh<<-EOM 
-echo ${APACHE_ENV}
-################################################
-### Stop Web Servers                         ###
-################################################
-/usr/sbin/apachectl -f /app/httpd/conf/httpd-cda.conf -k stop
-EOM
-
 ################################################
 ### Stop    PROXY for Web Servers            ###
 ################################################
@@ -59,25 +51,29 @@ fi
 ### Start   PROXY for Web Servers            ###
 ################################################
 nohup /app/AppDynamics/AppAgent/appdynamics-sdk-native/runSDKProxy.sh >>/dev/null 2> /app/AppDynamics/AppAgent/appdynamics-sdk-native/logs/proxy1.out &
+
+
+cat > /tmp/apache.sh<<-EOM 
+echo ${APACHE_ENV}
 ################################################
-### Start Web Servers                         ###
+### Restart Web Servers                      ###
 ################################################
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-cda.conf -k stop
 sleep 15
 cat > /tmp/apache.sh<<-EOM 
 echo ${APACHE_ENV}
 /usr/sbin/apachectl -f /app/httpd/conf/httpd-cda.conf -k start
 EOM
-ps -ef|grep cda
+# ps -ef|grep httpd-cda.conf
 
 # WWW3
-$APACHE_ENV
 cat > /tmp/apache.sh<<-EOM 
 echo ${APACHE_ENV}
 /usr/sbin/apachectl -f /app/httpd/conf/httpd-www3.conf -k stop
 sleep 15
 /usr/sbin/apachectl -f /app/httpd/conf/httpd-www3.conf -k start
 EOM
-ps -ef|grep www3
+# ps -ef|grep httpd-www3.conf
 
 #WWW4
 cat > /tmp/apache.sh<<-EOM 
@@ -86,7 +82,7 @@ echo ${APACHE_ENV}
 sleep 15
 /usr/sbin/apachectl -f /app/httpd/conf/httpd-www4.conf -k start
 EOM
-ps -ef|grep www4
+# ps -ef|grep httpd-www4.conf
 
 
 #httpd-mye.conf
@@ -138,9 +134,19 @@ AppDynamicsApplicationContext <application> <tier> <node>
 
 Include /app/httpd/conf/extra/appdynamics_agent.conf
 
-CONF_FILE='httpd-secure.conf'
-cat > /tmp/apache.sh <<- EOM
-/usr/sbin/apachectl -f /app/httpd/conf/$CONF_FILE -k stop
-sleep 15
-/usr/sbin/apachectl -f /app/httpd/conf/$CONF_FILE -k start
-EOM
+# ccwwwedev01
+CONF_FILES='httpd-pge.conf httpd-pge2.conf httpd-pgecorp.conf httpd-secure.conf'
+
+# itwwwedev01
+CONF_FILES='httpd-cda.conf httpd-www3.conf httpd-www4.conf'
+
+for CONF_FILE in ${CONF_FILES}; do
+  #cat > /tmp/apache.sh <<- EOM
+  /usr/sbin/apachectl -f /app/httpd/conf/$CONF_FILE -k stop
+  sleep 15
+  /usr/sbin/apachectl -f /app/httpd/conf/$CONF_FILE -k start
+  #EOM
+  ps -ef|grep ${CONF_FILE}
+done
+
+
