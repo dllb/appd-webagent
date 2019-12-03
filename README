@@ -140,13 +140,29 @@ CONF_FILES='httpd-pge.conf httpd-pge2.conf httpd-pgecorp.conf httpd-secure.conf'
 # itwwwedev01
 CONF_FILES='httpd-cda.conf httpd-www3.conf httpd-www4.conf'
 
+# itwwwdev02
+CONF_FILES='httpd-main.conf'
+
 for CONF_FILE in ${CONF_FILES}; do
-  #cat > /tmp/apache.sh <<- EOM
+  cat > /tmp/apache.sh <<- EOM
   /usr/sbin/apachectl -f /app/httpd/conf/$CONF_FILE -k stop
   sleep 15
   /usr/sbin/apachectl -f /app/httpd/conf/$CONF_FILE -k start
-  #EOM
+  EOM
   ps -ef|grep ${CONF_FILE}
 done
+
+cat > /tmp/apache.sh <<- EOM
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-main.conf -k stop
+sleep 15
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-main.conf -k start
+EOM
+
+ps -ef|grep httpd-main.conf
+
+cat > /tmp/apache.sh <<- EOM
+/usr/sbin/apachectl -f /app/httpd/conf/httpd-main.conf -k start
+EOM
+
 
 
