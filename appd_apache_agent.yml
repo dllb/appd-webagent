@@ -129,7 +129,7 @@
     become_user: "{{ appd_user }}"
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
-      regex: '^\s*AppDynamicsApplicationContext.*{{ item.app }} {{ item.tier }}.*$'
+      regex: '^\s*AppDynamicsApplicationContext\s{{ item.app }}.*$'
       state: absent
     with_items: "{{ remove_nodes }}"
     loop_control:
