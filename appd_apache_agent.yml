@@ -100,12 +100,12 @@
 ## Create a new appd agent config file 
   - name: "Process template for {{appd_agent_config_file}}"
     template:
-     src: "{{ appd_agent_config_template }}"
-     dest: "{{ appd_agent_config_file }}"
-     owner: "{{ appd_user }}"
-     group: "{{ appd_user }}"
-     mode: 0644
-     #force: yes
+      src: "{{ appd_agent_config_template }}"
+      dest: "{{ appd_agent_config_file }}"
+      owner: "{{ appd_user }}"
+      group: "{{ appd_user }}"
+      mode: 0644
+      #force: yes
     backup: yes 
     become: yes
     become_method: sudo
