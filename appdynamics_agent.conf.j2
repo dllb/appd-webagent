@@ -20,6 +20,13 @@ AppDynamicsAccessKey fzjk5rg21ss7
 {% endif %}
 AppDynamicsControllerPort {{ appd_controller_port }}
 
+{%- if env == 'QA' -%}
+#Configure Controller connection through an HTTP proxy server.
+AppDynamicsProxyHost pgeproxyws.comp.pge.com
+AppDynamicsProxyport 8080
+{% endif %}
+
+
 # AppDynamicsApplication {{ default_app }}
 # AppDynamicsTier {{ default_tier }}
 # AppDynamicsNode {{default_tier}}{{inventory_hostname}}
