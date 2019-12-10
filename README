@@ -55,8 +55,23 @@ nohup /app/AppDynamics/AppAgent/appdynamics-sdk-native/runSDKProxy.sh >>/dev/nul
 ################################################
 ### ccwwwedev01 restarts
 ################################################
-CONF_FILES='httpd-pge.conf httpd-pge2.conf httpd-pgecorp.conf httpd-secure.conf'
+CONF_FILES="httpd-pge.conf httpd-pge2.conf httpd-pgecorp.conf httpd-secure.conf"
 
+for CONF_FILE in $CONF_FILES; 
+do
+echo Restarting $CONF_FILE
+cat > /tmp/apache.sh <<- EOM
+/usr/sbin/apachectl -f "/app/httpd/conf/${CONF_FILE}" -k stop
+sleep 15
+/usr/sbin/apachectl -f "/app/httpd/conf/${CONF_FILE}" -k start
+EOM
+ps -ef|grep ${CONF_FILE}
+sleep 10
+done
+
+
+
+httpd-pge.conf
 cat >/tmp/apache.sh <<EOM
 /usr/sbin/apachectl -f /app/httpd/conf/httpd-pge.conf -k stop
 EOM
@@ -75,12 +90,11 @@ cat >/tmp/apache.sh <<EOM
 EOM
 ps -ef|grep httpd-pge2.conf
 
-ps -ef|grep httpd-pgecorp.conf
-
 cat >/tmp/apache.sh <<EOM
 /usr/sbin/apachectl -f /app/httpd/conf/httpd-pgecorp.conf -k stop
 EOM
 sleep 15
+cat >/tmp/apache.sh <<EOM
 /usr/sbin/apachectl -f /app/httpd/conf/httpd-pgecorp.conf -k start
 EOM
 ps -ef|grep httpd-pgecorp.conf
