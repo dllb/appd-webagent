@@ -106,7 +106,7 @@
      group: "{{ appd_user }}"
      mode: 0644
      #force: yes
-     #backup: yes 
+    backup: yes 
     become: yes
     become_method: sudo
     become_user: "{{ appd_user }}"       
@@ -129,8 +129,9 @@
     become_user: "{{ appd_user }}"
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
-      regex: '^\s*AppDynamicsApplicationContext\s{{ item.app }}'
+      regex: '^\s*AppDynamicsApplicationContext {{ item.app }}'
       state: absent
+      backup: yes
     with_items: "{{ remove_nodes }}"
     loop_control:
       index_var: counter 
@@ -157,6 +158,7 @@
       regex: 'AppDynamicsApplicationContext.*{{ item.tier }}.*$'
       insertafter: ^\s+((S|s)erver(N|n)ame|(S|s)erver(A|a)lias)\s* {{ item.virt_server }}.*$
       state: present
+      backup: yes
     with_items: "{{ apache_nodes }}"
     loop_control:
       index_var: counter
