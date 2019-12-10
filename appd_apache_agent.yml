@@ -121,8 +121,8 @@
       state: absent
       insertafter: ^BrowserMatch\s*.*redirect-carefully$
       backup: yes 
-    with_items: "{{ remove_nodes }}"   
-    when: remove_nodes is defined
+    with_items: "{{ apache_nodes }}"   
+    #when: remove_nodes is defined
 
   - name: "Remove instances/virtual servers being monitored from {{ apache_nodes.virt_server }}"      
     become: yes
@@ -132,10 +132,10 @@
       regex: '^\s*AppDynamicsApplicationContext {{ item.app }}'
       state: absent
       backup: yes
-    with_items: "{{ remove_nodes }}"
+    with_items: "{{ apache_nodes }}"
     loop_control:
       index_var: counter 
-    when: remove_nodes is defined      
+    # when: remove_nodes is defined      
 
   - name: "Add the Include directive to {{ appd_apache_conf_file }}"
     become: yes
