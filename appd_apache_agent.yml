@@ -105,8 +105,8 @@
       owner: "{{ appd_user }}"
       group: "{{ appd_user }}"
       mode: 0644
-      #force: yes
-    backup: yes 
+      # force: yes
+      # backup: yes 
     become: yes
     become_method: sudo
     become_user: "{{ appd_user }}"       
