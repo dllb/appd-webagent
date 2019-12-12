@@ -165,7 +165,7 @@
       line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{ inventory_hostname }}.{{ item.acronym }}"
       regex: '\sAppDynamicsApplicationContext.*"{{ inventory_hostname }}.{{ item.acronym }}"'
       state: present
-      backrefs: yes
+      # backrefs: yes
       backup: yes
     with_items: "{{ apache_nodes }}"
     loop_control:
