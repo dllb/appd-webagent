@@ -56,7 +56,7 @@ sleep 10
 ################################################
 ### itwwwdev02 restarts
 ################################################
-### httpd-cda.conf
+### httpd-main.conf
 cat >/tmp/apache.sh <<EOM
 /usr/sbin/apachectl -f /app/httpd/conf/httpd-main.conf -k stop
 EOM
