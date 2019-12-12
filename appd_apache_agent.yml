@@ -163,8 +163,9 @@
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
       insertafter: \<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*
       line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{ inventory_hostname }}.{{ item.acronym }}"
-      # regex: '\sAppDynamicsApplicationContext.*"{{ inventory_hostname }}.{{ item.acronym }}"'
+      regex: '\sAppDynamicsApplicationContext.*"{{ inventory_hostname }}.{{ item.acronym }}"'
       state: present
+      backrefs: yes
       backup: yes
     with_items: "{{ apache_nodes }}"
     loop_control:
