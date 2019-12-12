@@ -150,7 +150,7 @@
     with_items: "{{ apache_nodes }}"   
 
   - debug:
-      msg: "insertafter regex: '\<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*'"
+      msg: insertafter regex: \<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*
     with_items: "{{ apache_nodes }}"
 
   - debug:
