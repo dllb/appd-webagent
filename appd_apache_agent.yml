@@ -150,15 +150,15 @@
     with_items: "{{ apache_nodes }}"   
 
   - debug:
-      msg: 'insertafter regex: \<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*'
+      msg: "insertafter regex: \<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*"
     with_items: "{{ apache_nodes }}"
 
   - debug:
-      msg: 'regex: \<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*\n\sAppDynamicsApplicationContext.*{{ inventory_hostname }}.{{ item.acronym }}'
+      msg: "regex: \<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*\n\sAppDynamicsApplicationContext.*{{ inventory_hostname }}.{{ item.acronym }}"
     with_items: "{{ apache_nodes }}"
 
   - debug:
-      msg: 'line: AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{ inventory_hostname }}.{{ item.acronym }}'
+      msg: "line: AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{ inventory_hostname }}.{{ item.acronym }}"
     with_items: "{{ apache_nodes }}"    
 
   - name: "Add AppDynamicsApplicationContext to virtual server configuration for {{ apache_nodes.virt_server }}"
@@ -166,7 +166,7 @@
     become_user: "{{ appd_user }}"
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
-      insertafter: \<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*
+      insertafter: "\<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*"
       line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{ inventory_hostname }}.{{ item.acronym }}"
       regex: "\<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*\n\sAppDynamicsApplicationContext.*{{ inventory_hostname }}.{{ item.acronym }}"
       state: present
