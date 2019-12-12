@@ -156,7 +156,7 @@
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
       line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{inventory_hostname}}.{{ item.acronym }}"
       regex: 'AppDynamicsApplicationContext {{ item.app }}.*{{inventory_hostname}}.{{ item.acronym }}.*$'
-      insertafter: ^.*((S|s)erver(N|n)ame|(S|s)erver(A|a)lias)\s* {{ item.virt_server }}.*$    
+      insertafter: ^\s+((S|s)erver(N|n)ame|(S|s)erver(A|a)lias)\s* {{ item.virt_server }}.*$    
       state: present
       # backrefs: yes
       backup: yes
