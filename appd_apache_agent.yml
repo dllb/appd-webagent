@@ -156,7 +156,7 @@
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
       line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{inventory_hostname}}.{{ item.acronym }}"
-      #regex: 'AppDynamicsApplicationContext.*{{ item.tier }}.*$'
+      regex: "\sAppDynamicsApplicationContext.*{{ item.tier }}.*$"
       insertafter: ^\s+ServerName\s+\"{{ item.virt_server }}".*\s*$
       state: present
       backup: yes
