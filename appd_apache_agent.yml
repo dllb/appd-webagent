@@ -149,7 +149,6 @@
       backup: yes 
     with_items: "{{ apache_nodes }}"   
 
-
   - name: "Add AppDynamicsApplicationContext to virtual server configuration for {{ apache_nodes.virt_server }}"
     become: yes
     become_user: "{{ appd_user }}"
