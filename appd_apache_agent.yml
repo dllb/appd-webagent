@@ -149,6 +149,12 @@
       backup: yes 
     with_items: "{{ apache_nodes }}"   
 
+  - debug:
+      msg: 'insertbefore regex: \<VirtualHost.*>\n.*\s+(S|s)erver(N|n)ame\s+"{{ item.virt_server }}".*'
+    with_items: "{{ apache_nodes }}"
+    loop_control:
+      index_var: counter
+
   - name: "Add AppDynamicsApplicationContext to virtual server configuration for {{ apache_nodes.virt_server }}"
     become: yes
     become_user: "{{ appd_user }}"
