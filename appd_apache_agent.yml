@@ -150,10 +150,11 @@
     with_items: "{{ apache_nodes }}"   
 
   - debug:
-      msg: 'insertbefore regex: \<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*'
+      msg: 'insertafter regex: \<VirtualHost.*\>\s*\n.*\s+ServerName\s+{{ item.virt_server }}.*'
     with_items: "{{ apache_nodes }}"
     loop_control:
       index_var: counter
+
 
   - name: "Add AppDynamicsApplicationContext to virtual server configuration for {{ apache_nodes.virt_server }}"
     become: yes
