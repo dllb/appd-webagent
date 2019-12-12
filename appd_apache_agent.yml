@@ -150,7 +150,7 @@
     with_items: "{{ apache_nodes }}"   
 
   - debug:
-      msg: 'insertbefore regex: \<VirtualHost.*>\n.*\s+(S|s)erver(N|n)ame\s+"{{ item.virt_server }}".*'
+      msg: 'insertbefore regex: \<VirtualHost.*>\n.*\s+(S|s)erver(N|n)ame\s+{{ item.virt_server }}.*'
     with_items: "{{ apache_nodes }}"
     loop_control:
       index_var: counter
@@ -160,7 +160,7 @@
     become_user: "{{ appd_user }}"
     lineinfile:
       path: "{{appd_apache_conf_dir }}/{{ item.config_file }}"
-      insertafter: \<VirtualHost.*>\n.*\s+(S|s)erver(N|n)ame\s+"{{ item.virt_server }}".*
+      insertafter: \<VirtualHost.*>\n.*\s+(S|s)erver(N|n)ame\s+{{ item.virt_server }}.*
       line: " AppDynamicsApplicationContext {{ item.app }} {{ item.tier }} {{ inventory_hostname }}.{{ item.acronym }}"
       # regex: '\sAppDynamicsApplicationContext.*"{{ inventory_hostname }}.{{ item.acronym }}"'
       state: present
